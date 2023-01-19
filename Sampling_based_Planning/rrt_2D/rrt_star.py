@@ -11,7 +11,7 @@ import numpy as np
 sys.path.append(os.path.dirname(os.path.abspath(__file__)) +
                 "/../../Sampling_based_Planning/")
 
-from Sampling_based_Planning.rrt_2D import env, plotting, utils, queue
+from rrt_2D import env, plotting, utils, queue
 
 
 class Node:
@@ -173,10 +173,10 @@ class RrtStar:
 
 
 def main():
-    x_start = (18, 8)  # Starting node
-    x_goal = (37, 18)  # Goal node
+    x_start = (25, 12)  # Starting node
+    x_goal = (25, 5)  # Goal node
 
-    rrt_star = RrtStar(x_start, x_goal, 10, 0.10, 20, 10000)
+    rrt_star = RrtStar(x_start, x_goal, 10, 0.10, 20, 5000)
     rrt_star.planning()
 
 
