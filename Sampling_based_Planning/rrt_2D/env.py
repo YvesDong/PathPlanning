@@ -6,8 +6,8 @@ Environment for rrt_2D
 
 class Env:
     def __init__(self):
-        self.x_range = (0, 50)
-        self.y_range = (0, 30)
+        self.x_range = (0, 10)
+        self.y_range = (0, 10.5)
         self.obs_boundary = self.obs_boundary()
         self.obs_circle = self.obs_circle()
         self.obs_rectangle = self.obs_rectangle()
@@ -15,17 +15,17 @@ class Env:
     @staticmethod
     def obs_boundary():
         obs_boundary = [
-            [0, 0, 1, 30],
-            [0, 30, 50, 1],
-            [1, 0, 50, 1],
-            [50, 1, 1, 30]
+            [0, 0, 1, 10.5],
+            [0, 10.5, 10, 1],
+            [1, 0, 10, 1],
+            [10, 1, 1, 10.5]
         ]
         return obs_boundary
 
     @staticmethod
     def obs_rectangle():
         obs_rectangle = [
-            # [14, 12, 8, 2],
+            [6, 7, 1, 1.5], # [leftLowX,leftLowY, width, height]
             # [18, 22, 8, 3],
             # [26, 7, 2, 12],
             # [32, 14, 10, 2]
@@ -35,15 +35,15 @@ class Env:
     @staticmethod
     def obs_circle():
         obs_cir = [
-            [25, 8, 2],
-            [27, 9, 2],
-            [30, 11, 2],
-            [32, 13, 2],
-            [39, 16, 3],
-            [23, 9, 1],
-            [21, 10, 2],
-            [18, 13, 3],
-            [15, 15, 2],
-            [10, 17, 3]]
+            # [25, 8, 2],
+            # [27, 9, 2],
+            # [30, 11, 2],
+            # [32, 13, 2],
+            # [39, 16, 3],
+            # [23, 9, 1],
+            # [21, 10, 2],
+            # [18, 13, 3],
+            # [15, 17, 2],
+            [6, 5, 2]]
 
         return obs_cir

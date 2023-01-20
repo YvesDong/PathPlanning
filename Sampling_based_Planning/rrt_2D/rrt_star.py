@@ -26,7 +26,7 @@ class RrtStar:
                  goal_sample_rate, search_radius, iter_max):
         self.s_start = Node(x_start)
         self.s_goal = Node(x_goal)
-        self.step_len = step_len
+        self.step_len = step_len # max edge length
         self.goal_sample_rate = goal_sample_rate
         self.search_radius = search_radius
         self.iter_max = iter_max
@@ -94,16 +94,18 @@ class RrtStar:
         node_index = [i for i in range(len(dist_list)) if dist_list[i] <= self.step_len]
 
         if len(node_index) > 0:
-            cost_list = [dist_list[i] + self.cost(self.vertex[i]) for i in node_index
+            # cost_list = [dist_list[i] + self.cost(self.vertex[i]) for i in node_index
+            #              if not self.utils.is_collision(self.vertex[i], self.s_goal)]
+            cost_list = [max(0.0, self.s_goal.y-self.vertex[i].y) + self.cost(self.vertex[i]) for i in node_index
                          if not self.utils.is_collision(self.vertex[i], self.s_goal)]
+            print('cost min, max: ', np.min(cost_list), np.max(cost_list))
             return node_index[int(np.argmin(cost_list))]
 
         return len(self.vertex) - 1
 
     def get_new_cost(self, node_start, node_end):
-        dist, _ = self.get_distance_and_angle(node_start, node_end)
-
-        return self.cost(node_start) + dist
+        # dist, _ = self.get_distance_and_angle(node_start, node_end)
+        return max(self.cost(node_start), self.cost(node_end))
 
     def generate_random_node(self, goal_sample_rate):
         delta = self.utils.delta
@@ -117,7 +119,7 @@ class RrtStar:
     def find_near_neighbor(self, node_new):
         n = len(self.vertex) + 1
         r = min(self.search_radius * math.sqrt((math.log(n) / n)), self.step_len)
-
+        # could be more than one neighbors
         dist_table = [math.hypot(nd.x - node_new.x, nd.y - node_new.y) for nd in self.vertex]
         dist_table_index = [ind for ind in range(len(dist_table)) if dist_table[ind] <= r and
                             not self.utils.is_collision(node_new, self.vertex[ind])]
@@ -134,8 +136,12 @@ class RrtStar:
         node = node_p
         cost = 0.0
 
-        while node.parent:
-            cost += math.hypot(node.x - node.parent.x, node.y - node.parent.y)
+        while True:
+            # cost += math.hypot(node.x - node.parent.x, node.y - node.parent.y)
+            cost = max(cost, node.y) # max in the linked list
+            if not node.parent:
+                cost -= node.y # max relative height along the path
+                break; 
             node = node.parent
 
         return cost
@@ -173,10 +179,10 @@ class RrtStar:
 
 
 def main():
-    x_start = (25, 12)  # Starting node
-    x_goal = (25, 5)  # Goal node
+    x_start = (8, 7.0)  # Starting node
+    x_goal = (5, 7.5)  # Goal node
 
-    rrt_star = RrtStar(x_start, x_goal, 10, 0.10, 20, 5000)
+    rrt_star = RrtStar(x_start, x_goal, 1, 0.10, 2, 20000)
     rrt_star.planning()
 
 
