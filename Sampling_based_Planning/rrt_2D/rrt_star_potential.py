@@ -105,7 +105,8 @@ class RrtStar:
 
     def get_new_cost(self, node_start, node_end):
         # dist, _ = self.get_distance_and_angle(node_start, node_end)
-        return max(self.cost(node_start), self.cost(node_end))
+        # return max(self.cost(node_start), self.cost(node_end))
+        return max(self.cost(node_start), node_end.y)
 
     def generate_random_node(self, goal_sample_rate):
         delta = self.utils.delta
@@ -118,8 +119,8 @@ class RrtStar:
 
     def find_near_neighbor(self, node_new):
         n = len(self.vertex) + 1
-        r = min(self.search_radius * math.sqrt((math.log(n) / n)), self.step_len)
-        # could be more than one neighbors
+        r = min(self.search_radius * math.sqrt((math.log(n) / n)), self.step_len) # TODO: dont think it makes sense
+        # could be more than one neighbors, TODO: kdtree
         dist_table = [math.hypot(nd.x - node_new.x, nd.y - node_new.y) for nd in self.vertex]
         dist_table_index = [ind for ind in range(len(dist_table)) if dist_table[ind] <= r and
                             not self.utils.is_collision(node_new, self.vertex[ind])]
@@ -134,7 +135,7 @@ class RrtStar:
     @staticmethod
     def cost(node_p):
         node = node_p
-        cost = 0.0
+        cost = node.y
 
         while True:
             # cost += math.hypot(node.x - node.parent.x, node.y - node.parent.y)
@@ -181,8 +182,13 @@ class RrtStar:
 def main():
     x_start = (8, 7.0)  # Starting node
     x_goal = (5, 7.5)  # Goal node
+    step_len = 1
+    goal_sample_rate = .1
+    search_radius = 5 # find parent and rewire inside this circle, cannot be too small; the smaller, the faster
+    iter_max = 20000
 
-    rrt_star = RrtStar(x_start, x_goal, 1, 0.10, 2, 10000)
+    rrt_star = RrtStar(x_start, x_goal, step_len, 
+                       goal_sample_rate, search_radius, iter_max)
     rrt_star.planning()
 
 
