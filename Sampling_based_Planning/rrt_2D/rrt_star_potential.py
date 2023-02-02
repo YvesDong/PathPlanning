@@ -185,7 +185,7 @@ def main():
     step_len = 1
     goal_sample_rate = .1
     search_radius = 5 # find parent and rewire inside this circle, cannot be too small; the smaller, the faster
-    iter_max = 20000
+    iter_max = 2000
 
     rrt_star = RrtStar(x_start, x_goal, step_len, 
                        goal_sample_rate, search_radius, iter_max)

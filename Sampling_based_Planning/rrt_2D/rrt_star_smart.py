@@ -15,7 +15,7 @@ from scipy.spatial.transform import Rotation as Rot
 sys.path.append(os.path.dirname(os.path.abspath(__file__)) +
                 "/../../Sampling_based_Planning/")
 
-from Sampling_based_Planning.rrt_2D import env, plotting, utils
+from rrt_2D import env, plotting, utils
 
 
 class Node:
@@ -105,6 +105,9 @@ class RrtStarSmart:
         plt.show()
 
     def PathOptimization(self, node):
+        """determines an optimized path by directly connecting the nodes in the
+        path that are visible to each other and returns its cost """
+
         direct_cost_new = 0.0
         node_end = self.x_goal
 
@@ -123,6 +126,7 @@ class RrtStarSmart:
             self.UpdateBeacons()
 
     def UpdateBeacons(self):
+        """Beacons are close-to-optimal-path obstacle vertices"""
         node = self.x_goal
         beacons = []
 
@@ -166,6 +170,7 @@ class RrtStarSmart:
         return X_near
 
     def Sample(self, goal=None):
+        """biased sampling when beacon set is non-empty"""
         if goal is None:
             delta = self.utils.delta
             goal_sample_rate = self.goal_sample_rate
@@ -300,10 +305,10 @@ class RrtStarSmart:
 
 
 def main():
-    x_start = (18, 8)  # Starting node
-    x_goal = (37, 18)  # Goal node
+    x_start = (9, 5)  # Starting node
+    x_goal = (5, 7.5)  # Goal node
 
-    rrt = RrtStarSmart(x_start, x_goal, 1.5, 0.10, 0, 1000)
+    rrt = RrtStarSmart(x_start, x_goal, 1.5, 0.10, 1, 500)
     rrt.planning()
 
 
