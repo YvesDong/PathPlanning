@@ -106,7 +106,7 @@ class RrtStar:
     def get_new_cost(self, node_start, node_end):
         # dist, _ = self.get_distance_and_angle(node_start, node_end)
         # return max(self.cost(node_start), self.cost(node_end))
-        return max(self.cost(node_start), node_end.y)
+        return max(self.cost(node_start), node_end.y-self.s_start.y)
 
     def generate_random_node(self, goal_sample_rate):
         delta = self.utils.delta

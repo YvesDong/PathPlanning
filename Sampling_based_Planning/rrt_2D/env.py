@@ -25,10 +25,10 @@ class Env:
     @staticmethod
     def obs_rectangle():
         obs_rectangle = [
-            [6, 7, 1, 1.5], # [leftLowX,leftLowY, width, height]
-            # [18, 22, 8, 3],
-            # [26, 7, 2, 12],
-            # [32, 14, 10, 2]
+            [6, 7, 1, 2.5], # [leftLowX,leftLowY, width, height]
+            [6, 5, 2, 2],
+            [2.6, 3, 4, 2],
+            [3, 5, 1, 3]
         ]
         return obs_rectangle
 
@@ -44,6 +44,7 @@ class Env:
             # [21, 10, 2],
             # [18, 13, 3],
             # [15, 17, 2],
-            [6, 5, 2]]
+            # [6, 5, 2]
+            ]
 
         return obs_cir

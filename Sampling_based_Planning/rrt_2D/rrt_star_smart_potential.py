@@ -27,13 +27,14 @@ class Node:
 
 class RrtStarSmart:
     def __init__(self, x_start, x_goal, step_len,
-                 goal_sample_rate, search_radius, iter_max):
+                 goal_sample_rate, search_radius, iter_max, pot_ratio):
         self.x_start = Node(x_start)
         self.x_goal = Node(x_goal)
         self.step_len = step_len
         self.goal_sample_rate = goal_sample_rate
         self.search_radius = search_radius
         self.iter_max = iter_max
+        self.pot_ratio = pot_ratio
 
         self.env = env.Env()
         self.plotting = plotting.Plotting(x_start, x_goal)
@@ -49,7 +50,7 @@ class RrtStarSmart:
 
         self.V = [self.x_start]
         self.beacons = []
-        self.beacons_radius = 2
+        self.beacons_radius = .5
         self.direct_cost_old = np.inf
         self.obs_vertex = self.utils.get_obs_vertex()
         self.path = None
@@ -85,7 +86,7 @@ class RrtStarSmart:
                     # rewire
                     # c_min = self.Cost(x_new)
                     for x_near in X_near:
-                        c_near = self.Cost(x_near)
+                        c_near,_,_ = self.Cost(x_near)
                         c_new = self.get_new_cost(x_new, x_near)
                         # c_new = c_min + self.Line(x_new, x_near)
                         if c_new < c_near:
@@ -230,33 +231,27 @@ class RrtStarSmart:
         return math.hypot(x_goal.x - x_start.x, x_goal.y - x_start.y)
 
     # @staticmethod
-    # def Cost(node):
-    #     cost = 0.0
-    #     if node.parent is None:
-    #         return cost
+    def Cost(self, node):
+        cost_pot = node.y
+        cost_dis = 0.0
 
-    #     while node.parent:
-    #         cost += math.hypot(node.x - node.parent.x, node.y - node.parent.y)
-    #         node = node.parent
-
-    #     return cost
-    
-    @staticmethod
-    def Cost(node):
-        cost = node.y
-
-        while True:
-            cost = max(cost, node.y) # max in the linked list
-            if not node.parent:
-                cost -= node.y # max relative height along the path
-                break; 
+        while node.parent:
+            cost_pot = max(cost_pot, node.y) # max in the linked list
+            cost_dis += math.hypot(node.x - node.parent.x, node.y - node.parent.y)
+            # if not node.parent:
+                # break; 
             node = node.parent
+        cost_pot -= node.y # max relative height along the path
 
-        return cost
+        cost = cost_pot*self.pot_ratio + cost_dis*(1-self.pot_ratio)
+        return cost, cost_pot, cost_dis
 
-    def get_new_cost(self, node_start, node_end):
-        return max(self.Cost(node_start), node_end.y)
-  
+    def get_new_cost(self, node_start, node_end, pot_ratio=.97):
+        _, cost_pot, cost_dis = self.Cost(node_start)
+        cost_pot_new = max(cost_pot, node_end.y-self.x_start.y)
+        cost_dis_new = cost_dis + self.Line(node_start, node_end)
+        return cost_pot_new*self.pot_ratio + cost_dis_new*(1-self.pot_ratio)
+
     @staticmethod
     def get_distance_and_angle(node_start, node_end):
         dx = node_end.x - node_start.x
@@ -326,9 +321,9 @@ class RrtStarSmart:
 
 def main():
     x_start = (9, 5)  # Starting node
-    x_goal = (5, 7.5)  # Goal node
+    x_goal = (4.5, 6.8)  # Goal node
 
-    rrt = RrtStarSmart(x_start, x_goal, 1, 0.10, 1, 600)
+    rrt = RrtStarSmart(x_start, x_goal, 1, 0., 1, 2000, .97)
     rrt.planning()
 
 
