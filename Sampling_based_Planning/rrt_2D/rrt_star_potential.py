@@ -1,6 +1,7 @@
 """
 RRT_star 2D
-@author: huiming zhou
+@author: huiming zhou, yifei dong
+mapping based on lowest gravitational potential on the path
 """
 
 import os
@@ -78,7 +79,6 @@ class RrtStar:
 
     def choose_parent(self, node_new, neighbor_index):
         cost = [self.get_new_cost(self.vertex[i], node_new) for i in neighbor_index]
-
         cost_min_index = neighbor_index[int(np.argmin(cost))]
         node_new.parent = self.vertex[cost_min_index]
 
