@@ -1,6 +1,9 @@
 # informed RRT star in 3D
 """
-This is IRRT* code for 3D
+This is IRRT* code for 3D.
+Informed - informed by current best path. 
+Biased sampling in a shrinking ellipsoid deduced from the best paths.
+It does not seem to fit potential-based RRT - how to define an ellipsoid?
 @author: yue qi 
 source: J. D. Gammell, S. S. Srinivasa, and T. D. Barfoot, “Informed RRT*:
         Optimal sampling-based path planning focused via direct sampling of
@@ -65,7 +68,7 @@ class IRRT:
     def Informed_rrt(self):
         self.V = [self.xstart]
         self.E = set()
-        self.Xsoln = set()
+        self.Xsoln = set() # set of nodes close to goal
         self.T = (self.V, self.E)
         
         c = 1
@@ -87,6 +90,7 @@ class IRRT:
                 Xnear = near(self, xnew)
                 xmin = xnearest
                 cmin = self.cost(xmin) + c * self.line(xnearest, xnew)
+                # find parent
                 for xnear in Xnear:
                     xnear = tuple(xnear)
                     cnew = self.cost(xnear) + c * self.line(xnear, xnew)

@@ -180,8 +180,8 @@ class RrtStar:
 
 
 def main():
-    x_start = (8, 7.0)  # Starting node
-    x_goal = (5, 7.5)  # Goal node
+    x_start = (9, 5)  # Starting node
+    x_goal = (4.5, 6.8)  # Goal node
     step_len = 1
     goal_sample_rate = .1
     search_radius = 5 # find parent and rewire inside this circle, cannot be too small; the smaller, the faster
