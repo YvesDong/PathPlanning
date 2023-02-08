@@ -261,7 +261,7 @@ class RrtStarSmart:
 
     def animation(self):
         plt.cla()
-        self.plot_grid("rrt*-Smart-mixedCost, N = " + str(self.iter_max))
+        self.plot_grid("rrt*-Smart-mixedCost, N = {}, potential ratio = {}".format(str(self.iter_max), self.pot_ratio))
         plt.gcf().canvas.mpl_connect(
             'key_release_event',
             lambda event: [exit(0) if event.key == 'escape' else None])
